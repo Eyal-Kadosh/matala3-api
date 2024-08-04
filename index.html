@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Price Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Car Price Prediction</h1>
+        <form action="/predict" method="post">
+            <div class="form-group">
+                <label for="manufactor">Manufacturer</label>
+                <input type="text" id="manufactor" name="manufactor" value="{{ request.form.get('manufactor', '') }}" required>
+            </div>
+            <div class="form-group">
+                <label for="Year">Year</label>
+                <input type="number" id="Year" name="Year" value="{{ request.form.get('Year', '') }}" required>
+            </div>
+            <div class="form-group">
+                <label for="model">Model</label>
+                <input type="text" id="model" name="model" value="{{ request.form.get('model', '') }}" required>
+            </div>
+            <div class="form-group">
+                <label for="Hand">Hand</label>
+                <input type="number" id="Hand" name="Hand" value="{{ request.form.get('Hand', '') }}">
+            </div>
+            <div class="form-group">
+                <label for="Gear">Gear</label>
+                <select id="Gear" name="Gear">
+                    <option value="" {% if request.form.get('Gear') == '' %}selected{% endif %}>Select an option</option>
+                    <option value="אוטומטית" {% if request.form.get('Gear') == 'אוטומטית' %}selected{% endif %}>אוטומטית</option>
+                    <option value="ידנית" {% if request.form.get('Gear') == 'ידנית' %}selected{% endif %}>ידנית</option>
+                    <option value="טיפטרוניק" {% if request.form.get('Gear') == 'טיפטרוניק' %}selected{% endif %}>טיפטרוניק</option>
+                    <option value="רובוטית" {% if request.form.get('Gear') == 'רובוטית' %}selected{% endif %}>רובוטית</option>
+                    <option value="אחר" {% if request.form.get('Gear') == 'אחר' %}selected{% endif %}>אחר</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="capacity_Engine">Capacity Engine</label>
+                <input type="number" step="0.1" id="capacity_Engine" name="capacity_Engine" value="{{ request.form.get('capacity_Engine', '') }}">
+            </div>
+            <div class="form-group">
+                <label for="Engine_type">Engine Type</label>
+                <select id="Engine_type" name="Engine_type">
+                    <option value="" {% if request.form.get('Engine_type') == '' %}selected{% endif %}>Select an option</option>
+                    <option value="בנזין" {% if request.form.get('Engine_type') == 'בנזין' %}selected{% endif %}>בנזין</option>
+                    <option value="דיזל" {% if request.form.get('Engine_type') == 'דיזל' %}selected{% endif %}>דיזל</option>
+                    <option value="טורבו דיזל" {% if request.form.get('Engine_type') == 'טורבו דיזל' %}selected{% endif %}>טורבו דיזל</option>
+                    <option value="היברידי" {% if request.form.get('Engine_type') == 'היברידי' %}selected{% endif %}>היברידי</option>
+                    <option value="גז" {% if request.form.get('Engine_type') == 'גז' %}selected{% endif %}>גז</option>
+                    <option value="חשמלי" {% if request.form.get('Engine_type') == 'חשמלי' %}selected{% endif %}>חשמלי</option>
+                    <option value="אחר" {% if request.form.get('Engine_type') == 'אחר' %}selected{% endif %}>אחר</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Prev_ownership">Previous Ownership</label>
+                <select id="Prev_ownership" name="Prev_ownership">
+                    <option value="" {% if request.form.get('Prev_ownership') == '' %}selected{% endif %}>Select an option</option>
+                    <option value="פרטית" {% if request.form.get('Prev_ownership') == 'פרטית' %}selected{% endif %}>פרטית</option>
+                    <option value="ליסינג" {% if request.form.get('Prev_ownership') == 'ליסינג' %}selected{% endif %}>ליסינג</option>
+                    <option value="מונית" {% if request.form.get('Prev_ownership') == 'מונית' %}selected{% endif %}>מונית</option>
+                    <option value="חברה" {% if request.form.get('Prev_ownership') == 'חברה' %}selected{% endif %}>חברה</option>
+                    <option value="השכרה" {% if request.form.get('Prev_ownership') == 'השכרה' %}selected{% endif %}>השכרה</option>
+                    <option value="ממשלתי" {% if request.form.get('Prev_ownership') == 'ממשלתי' %}selected{% endif %}>ממשלתי</option>
+                    <option value="אחר" {% if request.form.get('Prev_ownership') == 'אחר' %}selected{% endif %}>אחר</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Curr_ownership">Current Ownership</label>
+                <select id="Curr_ownership" name="Curr_ownership">
+                    <option value="" {% if request.form.get('Curr_ownership') == '' %}selected{% endif %}>Select an option</option>
+                    <option value="פרטית" {% if request.form.get('Curr_ownership') == 'פרטית' %}selected{% endif %}>פרטית</option>
+                    <option value="ליסינג" {% if request.form.get('Curr_ownership') == 'ליסינג' %}selected{% endif %}>ליסינג</option>
+                    <option value="מונית" {% if request.form.get('Curr_ownership') == 'מונית' %}selected{% endif %}>מונית</option>
+                    <option value="חברה" {% if request.form.get('Curr_ownership') == 'חברה' %}selected{% endif %}>חברה</option>
+                    <option value="השכרה" {% if request.form.get('Curr_ownership') == 'השכרה' %}selected{% endif %}>השכרה</option>
+                    <option value="ממשלתי" {% if request.form.get('Curr_ownership') == 'ממשלתי' %}selected{% endif %}>ממשלתי</option>
+                    <option value="אחר" {% if request.form.get('Curr_ownership') == 'אחר' %}selected{% endif %}>אחר</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Area">Area</label>
+                <input type="text" id="Area" name="Area" value="{{ request.form.get('Area', '') }}">
+            </div>
+            <div class="form-group">
+                <label for="City">City</label>
+                <input type="text" id="City" name="City" value="{{ request.form.get('City', '') }}">
+            </div>
+            <div class="form-group">
+                <label for="Pic_num">Pic Num</label>
+                <input type="number" id="Pic_num" name="Pic_num" value="{{ request.form.get('Pic_num', '') }}">
+            </div>
+            <div class="form-group">
+                <label for="Cre_date">Creation Date</label>
+                <input type="date" id="Cre_date" name="Cre_date" value="{{ request.form.get('Cre_date', '') }}">
+            </div>
+            <div class="form-group">
+                <label for="Repub_date">Republish Date</label>
+                <input type="date" id="Repub_date" name="Repub_date" value="{{ request.form.get('Repub_date', '') }}">
+            </div>
+            <div class="form-group">
+                <label for="Description">Description</label>
+                <textarea id="Description" name="Description" rows="4">{{ request.form.get('Description', '') }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="Color">Color</label>
+                <input type="text" id="Color" name="Color" value="{{ request.form.get('Color', '') }}">
+            </div>
+            <div class="form-group">
+                <label for="Km">KM</label>
+                <input type="number" id="Km" name="Km" value="{{ request.form.get('Km', '') }}" required>
+            </div>
+            <div class="form-group">
+                <label for="Test">Test</label>
+                <input type="date" id="Test" name="Test" value="{{ request.form.get('Test', '') }}">
+            </div>
+            <div class="form-group">
+                <label for="Supply_score">Supply Score</label>
+                <input type="number" id="Supply_score" name="Supply_score" value="{{ request.form.get('Supply_score', '') }}">
+            </div>
+            <div class="form-group">
+                <button type="submit">Predict Price</button>
+            </div>
+        </form>
+
+        <!-- הצגת התוצאה -->
+        {% if prediction is not none %}
+        <h2>Predicted Price: {{ prediction }}  ₪  </h2>
+        {% elif error %}
+        <h2 style="color: red;">Error: {{ error }}</h2>
+        {% endif %}
+    </div>
+</body>
+</html>
